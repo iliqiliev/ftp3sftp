@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ftp2sftp"
+authors = [
+  { name="Sebastian Meyer", email="sparrow.242.de@gmail.com" },
+]
+description = "A simple FTP to SFTP bridge"
+readme = "README.md"
+requires-python = ">=3.6"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha"
+]
+dynamic = ["dependencies", "version"]
+
+[project.urls]
+"Homepage" = "https://gitlab.com/sparrow.242.de/ftp2sftp"
+"Bug Tracker" = "https://gitlab.com/sparrow.242.de/ftp2sftp/-/issues"
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
+
+[tool.hatch.version]
+path = "src/ftp2sftp/__about__.py"
