@@ -1,7 +1,8 @@
 [project]
 name = "ftp3sftp"
-version = "0.7"
+version = "0.7.1"
 description = "A simple FTP to SFTP bridge. Fork of `ftp2sftp`."
+readme = "README.md"
 requires-python = ">=3.9"
 authors = [
   { name = "Iliya Iliev", email = "iliq0000@proton.me" },
