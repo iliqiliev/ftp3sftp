@@ -350,7 +350,7 @@ def parse_arguments_options():
 def main():
     print(
         dedent("""\
-        ftp3sftp.py (Version 0.5)
+        ftp3sftp.py (Version 0.7)
         Copyright (C) 2026  Iliya Iliev     <iliq0000@proton.me>
         Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
         Licensed under GNU GPL (https://www.gnu.org/licenses/gpl-3.0.html)

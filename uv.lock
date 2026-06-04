@@ -303,7 +303,7 @@ wheels = [
 
 [[package]]
 name = "ftp3sftp"
-version = "0.4"
+version = "0.7"
 source = { editable = "." }
 dependencies = [
     { name = "paramiko" },
