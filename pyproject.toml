@@ -23,7 +23,7 @@ dependencies = [
 "Homepage" = "https://gitlab.com/sparrow.242.de/ftp3sftp"
 
 [project.scripts]
-ftp3sftp = "ftp3sftp:main"
+ftp3sftp = "ftp3sftp.ftp3sftp:main"
 
 [build-system]
 requires = ["uv_build>=0.11.19,<0.12"]
