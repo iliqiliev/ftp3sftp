@@ -354,7 +354,7 @@ def parse_arguments_options():
 def main():
     print(
         dedent("""\
-        ftp3sftp.py (Version 0.2)
+        ftp3sftp.py (Version 0.3)
         Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
         Copyright (C) 2026  Iliya Iliev   <iliq0000@proton.me>
         Licensed under GNU GPL (https://www.gnu.org/licenses/gpl-3.0.html)

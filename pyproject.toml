@@ -1,6 +1,6 @@
 [project]
 name = "ftp3sftp"
-version = "0.2"
+version = "0.3"
 description = "A simple FTP to SFTP bridge"
 requires-python = ">=3.9"
 authors = [
