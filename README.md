@@ -1,6 +1,5 @@
 # ftp3sftp - A simple FTP to SFTP bridge
 
-
 ## Usecase
 FTP is a protocol that was introduced in the 80's and today has the major problem of non-encrypted communication. Due to this problem, today there are two well-known advancements of the protocol: FTPS and SFTP.
 Unfortunately, there are still legacy systems in the wild that can only communicate with FTP servers. Depending on the importance and maintenance possibilities of the system, the function of working with one of the encrypted variants cannot be implemented with a realistic effort. If no middleware is then available, there are few options.
@@ -13,14 +12,10 @@ But in the background a connection to a SFTP server is established after a succe
 If the FTP client (for example, the legacy system) and _ftp3sftp_ are running on the same machine or at least on the same network, and the target SFTP server is only accessible via the Internet, it can thus be ensured that the data transfer via the Internet is appropriately encrypted using the SFTP protocol.
 
 ## How to install _ftp3sftp_
-_ftp3sftp_ is a Python 3 module. You can install it like:
+You can install it using [uv](https://docs.astral.sh/uv):
 ```sh
 uv tool install ftp3sftp
 ```
-### Windows special
-While installing not .exe files is still a mystery for some windows users, I created another [repository](https://gitlab.com/sparrow.242.de/ftp3sftp-windows-binaries/-/tree/main) to hold .exe files which were created using [pyinstaller](https://pyinstaller.org/en/stable/).
-If you want to run _ftp3sftp_ as a service, you should take a look to [nssm](https://nssm.cc), what is a easy way to run any programs as a service.
-
 
 ## How to use _ftp3sftp_
 

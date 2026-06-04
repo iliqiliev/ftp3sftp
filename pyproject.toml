@@ -1,17 +1,24 @@
 [project]
 name = "ftp3sftp"
-version = "0.3"
-description = "A simple FTP to SFTP bridge"
+version = "0.4"
+description = "A simple FTP to SFTP bridge. Fork of `ftp2sftp`."
 requires-python = ">=3.9"
 authors = [
+  { name = "Iliya Iliev", email = "iliq0000@proton.me" },
   { name = "Sebastian Meyer", email = "sparrow.242.de@gmail.com" },
-  { name = "Iliya Iliev", email = "iliq0000@proton.me" }
 ]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
   "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3"
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
   "paramiko>=5.0.0",
@@ -19,8 +26,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Bug Tracker" = "https://gitlab.com/sparrow.242.de/ftp3sftp/-/issues"
-"Homepage" = "https://gitlab.com/sparrow.242.de/ftp3sftp"
+"Bug Tracker" = "https://github.com/iliqiliev/ftp3sftp/issues"
+"Homepage" = "https://github.com/iliqiliev/ftp3sftp"
 
 [project.scripts]
 ftp3sftp = "ftp3sftp.ftp3sftp:main"

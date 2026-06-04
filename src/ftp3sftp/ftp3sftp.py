@@ -14,7 +14,7 @@ from logging.handlers import TimedRotatingFileHandler
 from stat import S_ISDIR
 from textwrap import dedent
 
-import paramiko
+from paramiko import SFTPClient, Transport
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
@@ -22,35 +22,22 @@ from pyftpdlib.servers import FTPServer
 Address = namedtuple("Address", ("host", "port", "username", "password", "path"))
 
 
-def connect_sftp(host, port, username, password):
+def connect_sftp(
+    host: str, port: int, username: str, password: str
+) -> tuple[Transport, SFTPClient | None]:
     """Connect a SFTP server, returns (transport, SFTP-Client)
 
     This functions connects to a SFTP Server and returs a tuple with
     a paramiko/SSH-transport object and an SFTP-Client object.
-
-    Parameters
-    ----------
-    host : str
-        The hostname or IP of the SFTP server
-    port : int
-        The SFTP server's port
-    username : str
-        username to log into the SFTP server
-    password : str
-        password to log into the SFTP server
-
-
-    Returns
-    -------
-    tuple
-        first element: paramiko.transport.Transport
-        second element: paramiko.sftp_client.SFTPClient
     """
 
     logging.info(f"Try to connect SFTP: {host}:{port} as user '{username}'")
-    transport = paramiko.Transport((host, port))
+
+    transport = Transport((host, port))
     transport.connect(None, username, password)
-    sftp_client = paramiko.SFTPClient.from_transport(transport)
+
+    sftp_client = SFTPClient.from_transport(transport)
+
     return (transport, sftp_client)
 
 
@@ -143,7 +130,7 @@ class SFTPConnectedFS:
         logging.debug(f"call set cwd : {path} -> {new_cwd}")
         self._cwd = new_cwd
 
-    def format_mlsx(self, basedir, listing, perms, facts, ignore_err=True):
+    def format_mlsx(self, basedir: str, listing, perms, facts, ignore_err=True):
         logging.debug(
             f"call format_mlsx : {basedir}, {listing}, {perms}, {facts}, {ignore_err} -> ..."
         )
@@ -164,7 +151,7 @@ class SFTPConnectedFS:
             logging.debug(f" response format_mlsx : {response}")
             yield response
 
-    def fs2ftp(self, fspath):
+    def fs2ftp(self, fspath: str):
         if fspath.startswith("."):
             fspath = fspath[1:]
         fspath = (
@@ -176,7 +163,7 @@ class SFTPConnectedFS:
         logging.debug(f"call fs2ftp : {fspath} -> {ftppath}")
         return ftppath
 
-    def ftp2fs(self, ftppath):
+    def ftp2fs(self, ftppath: str):
         if not ftppath.startswith("/"):
             ftppath = f"{self._cwd}/{ftppath}"
         fspath = (
@@ -188,13 +175,13 @@ class SFTPConnectedFS:
         logging.debug(f"call ftp2fs : {ftppath} -> {fspath}")
         return fspath
 
-    def getmtime(self, path):
+    def getmtime(self, path: str):
         stat = self.sftp_client.stat(path)
         mtime = stat.st_mtime
         logging.debug(f"call getmtime : {path} {mtime}")
         return mtime
 
-    def isdir(self, path):
+    def isdir(self, path: str):
         is_dir = None
         try:
             stat = self.sftp_client.stat(path)
@@ -205,7 +192,7 @@ class SFTPConnectedFS:
         logging.debug(f"call isdir : {path} -> {is_dir}")
         return is_dir
 
-    def isfile(self, path):
+    def isfile(self, path: str):
         is_file = None
         try:
             stat = self.sftp_client.stat(path)
@@ -216,7 +203,7 @@ class SFTPConnectedFS:
         logging.debug(f"call isfile : {path} -> {is_file}")
         return is_file
 
-    def lexists(self, path):
+    def lexists(self, path: str):
         exists = True
         try:
             _ = self.sftp_client.stat(path)
@@ -225,23 +212,23 @@ class SFTPConnectedFS:
         logging.debug(f"call lexists : {path} -> {exists}")
         return exists
 
-    def listdir(self, path):
+    def listdir(self, path: str):
         listing = self.sftp_client.listdir(path)
         logging.debug(f"call listdir : {path} -> {listing}")
         return listing
 
-    def mkdir(self, path):
+    def mkdir(self, path: str):
         logging.debug(f"call mkdir : {path}")
         self.sftp_client.mkdir(path)
 
-    def open(self, filename, mode):
+    def open(self, filename: str, mode: str):
         logging.debug(f"call open : {filename}, {mode}")
         sftp_open = self.sftp_client.open(filename, mode)
         # the .name property of the handle is used by the FTP library.
         sftp_open.name = filename
         return sftp_open
 
-    def realpath(self, path):
+    def realpath(self, path: str):
         if not path.startswith("/"):
             cwd = self._cwd[:-1] if self._cwd.endswith("/") else self._cwd
             realpath = realpath = f"{cwd}/{path}"
@@ -251,15 +238,15 @@ class SFTPConnectedFS:
         logging.debug(f"call realpath : {path} -> {realpath}")
         return realpath
 
-    def rename(self, src, dst):
+    def rename(self, src: str, dst: str):
         logging.debug(f"call rename : {src} {dst}")
         self.sftp_client.rename(src, dst)
 
-    def remove(self, path):
+    def remove(self, path: str):
         logging.debug(f"call remvoe : {path}")
         self.sftp_client.remove(path)
 
-    def rmdir(self, path):
+    def rmdir(self, path: str):
         logging.debug(f"call rmdir : {path}")
         self.sftp_client.rmdir(path)
 
@@ -268,25 +255,25 @@ class SFTPConnectedFS:
         logging.debug(f"call root : {self._root}")
         return self._root
 
-    def utime(self, path, timeval):
+    def utime(self, path: str, timeval: float):
         logging.debug(f"call utime : {path} {timeval}")
         self.sftp_client.utime(path, (timeval, timeval))
 
-    def validpath(self, path):
+    def validpath(self, path: str):
         is_valid = True
         logging.debug(f"call validpath : {path} -> {is_valid}")
         return is_valid
 
 
-def setup_logger(loglevel, logdir, keeplog):
+def setup_logger(loglevel: int | str, logdir, keeplog):
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     logger = logging.getLogger()
-    logger.setLevel(logging.getLevelName(loglevel))
+    logger.setLevel(loglevel)
     stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(logging.getLevelName(loglevel))
+    stream_handler.setLevel(loglevel)
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
     logger.info(f"Logging is active on level {logging.getLevelName(logger.level)}")
@@ -298,7 +285,7 @@ def setup_logger(loglevel, logdir, keeplog):
             interval=1,
             backupCount=keeplog,
         )
-        handler.setLevel(logging.getLevelName(loglevel))
+        handler.setLevel(loglevel)
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
@@ -354,9 +341,9 @@ def parse_arguments_options():
 def main():
     print(
         dedent("""\
-        ftp3sftp.py (Version 0.3)
+        ftp3sftp.py (Version 0.4)
+        Copyright (C) 2026  Iliya Iliev     <iliq0000@proton.me>
         Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
-        Copyright (C) 2026  Iliya Iliev   <iliq0000@proton.me>
         Licensed under GNU GPL (https://www.gnu.org/licenses/gpl-3.0.html)
         This program comes with ABSOLUTELY NO WARRANTY.
         This is free software, and you are welcome to redistribute it
