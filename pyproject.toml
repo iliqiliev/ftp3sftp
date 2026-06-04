@@ -1,29 +1,30 @@
-[build-system]
-requires = ["hatchling", "hatch-requirements-txt"]
-build-backend = "hatchling.build"
-
 [project]
-name = "ftp2sftp"
-authors = [
-  { name="Sebastian Meyer", email="sparrow.242.de@gmail.com" },
-]
+name = "ftp3sftp"
+version = "0.2"
 description = "A simple FTP to SFTP bridge"
-readme = "README.md"
-requires-python = ">=3.6"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    "Operating System :: OS Independent",
-    "Development Status :: 3 - Alpha"
+requires-python = ">=3.9"
+authors = [
+  { name = "Sebastian Meyer", email = "sparrow.242.de@gmail.com" },
+  { name = "Iliya Iliev", email = "iliq0000@proton.me" }
 ]
-dynamic = ["dependencies", "version"]
+classifiers = [
+  "Development Status :: 3 - Beta",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3"
+]
+dependencies = [
+  "paramiko>=5.0.0",
+  "pyftpdlib>=2.2.0",
+]
 
 [project.urls]
-"Homepage" = "https://gitlab.com/sparrow.242.de/ftp2sftp"
-"Bug Tracker" = "https://gitlab.com/sparrow.242.de/ftp2sftp/-/issues"
+"Bug Tracker" = "https://gitlab.com/sparrow.242.de/ftp3sftp/-/issues"
+"Homepage" = "https://gitlab.com/sparrow.242.de/ftp3sftp"
 
-[tool.hatch.metadata.hooks.requirements_txt]
-files = ["requirements.txt"]
+[project.scripts]
+ftp3sftp = "ftp3sftp:main"
 
-[tool.hatch.version]
-path = "src/ftp2sftp/__about__.py"
+[build-system]
+requires = ["uv_build>=0.11.19,<0.12"]
+build-backend = "uv_build"
