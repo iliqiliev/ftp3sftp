@@ -1,6 +1,6 @@
 # ftp3sftp.py - A FTP to SFTP bridge
-# Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
 # Copyright (C) 2026  Iliya Iliev     <iliq0000@proton.me>
+# Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
 # You should have received a copy of the GNU General Public License V3
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -24,9 +24,8 @@ Address = namedtuple("Address", ("host", "port", "username", "password", "path")
 
 def connect_sftp(
     host: str, port: int, username: str, password: str
-) -> tuple[Transport, SFTPClient | None]:
-    """Connect a SFTP server, returns (transport, SFTP-Client)
-
+) -> tuple[Transport, SFTPClient]:
+    """
     This functions connects to a SFTP Server and returs a tuple with
     a paramiko/SSH-transport object and an SFTP-Client object.
     """
@@ -38,12 +37,17 @@ def connect_sftp(
 
     sftp_client = SFTPClient.from_transport(transport)
 
+    if sftp_client is None:
+        raise ValueError("Failed to create SFTP client.")
+
     return (transport, sftp_client)
 
 
 class Authorizer(DummyAuthorizer):
-    """Subclass of the dummy example to have the option to
-    manage users without a local directory on the filesystem"""
+    """
+    Subclass of the dummy example to have the option to
+    manage users without a local directory on the filesystem
+    """
 
     def add_user(
         self,
@@ -54,11 +58,13 @@ class Authorizer(DummyAuthorizer):
         msg_login="Login successful.",
         msg_quit="Goodbye.",
     ):
-        """Add a user to the virtual users table.
+        """
+        Add a user to the virtual users table.
 
         We overwrite the function because we don't need a homedir
         on the local filesystem.
         """
+
         if self.has_user(username):
             raise ValueError("user %r already exists" % username)
         self._check_permissions(username, perm)
@@ -123,6 +129,7 @@ class SFTPConnectedFS:
         # We need a little workaround here to resolve posix files (for the
         # SFTP server) on a not posix system. We use pathlib and cut of the
         # drive letter if it appears.
+
         new_cwd_path = pathlib.Path(path).resolve()
         new_cwd = new_cwd_path.as_posix()
         if new_cwd.startswith(new_cwd_path.drive):
@@ -223,9 +230,11 @@ class SFTPConnectedFS:
 
     def open(self, filename: str, mode: str):
         logging.debug(f"call open : {filename}, {mode}")
+
         sftp_open = self.sftp_client.open(filename, mode)
         # the .name property of the handle is used by the FTP library.
         sftp_open.name = filename
+
         return sftp_open
 
     def realpath(self, path: str):
@@ -341,7 +350,7 @@ def parse_arguments_options():
 def main():
     print(
         dedent("""\
-        ftp3sftp.py (Version 0.4)
+        ftp3sftp.py (Version 0.5)
         Copyright (C) 2026  Iliya Iliev     <iliq0000@proton.me>
         Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
         Licensed under GNU GPL (https://www.gnu.org/licenses/gpl-3.0.html)
@@ -352,7 +361,7 @@ def main():
 
     options = parse_arguments_options()
     setup_logger(options.loglevel, options.logdir, options.keeplog)
-    logging.info("fpt2sftp is starting...")
+    logging.info("ftp3sftp is starting...")
     authorizer = Authorizer()
     authorizer.add_user(
         options.ftp.username,

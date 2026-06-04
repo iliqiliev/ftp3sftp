@@ -1,6 +1,6 @@
 [project]
 name = "ftp3sftp"
-version = "0.4"
+version = "0.5"
 description = "A simple FTP to SFTP bridge. Fork of `ftp2sftp`."
 requires-python = ">=3.9"
 authors = [
@@ -9,10 +9,8 @@ authors = [
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
-  "Intended Audience :: Developers",
   "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -20,6 +18,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
+
 dependencies = [
   "paramiko>=5.0.0",
   "pyftpdlib>=2.2.0",
