@@ -8,11 +8,11 @@ from __future__ import annotations
 
 import argparse
 import logging
-import pathlib
 from collections import namedtuple
 from datetime import datetime as DateTime
 from datetime import timezone
 from logging.handlers import TimedRotatingFileHandler
+from pathlib import Path
 from stat import S_ISDIR
 from textwrap import dedent
 
@@ -170,7 +170,7 @@ class SFTPConnectedFS:
         # SFTP server) on a not posix system. We use pathlib and cut of the
         # drive letter if it appears.
 
-        new_cwd_path = pathlib.Path(path).resolve()
+        new_cwd_path = Path(path).resolve()
         new_cwd = new_cwd_path.as_posix()
         new_cwd = new_cwd.removeprefix(new_cwd_path.drive)
         logging.debug(f"call set cwd : {path} -> {new_cwd}")
@@ -372,7 +372,7 @@ def parse_arguments_options():
     )
     parser.add_argument(
         "--logdir",
-        type=pathlib.Path,
+        type=Path,
         default=None,
         help="Directory to write the log. Logs will be sperated in files daily",
     )
