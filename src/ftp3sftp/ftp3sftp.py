@@ -170,8 +170,7 @@ class SFTPConnectedFS:
 
         new_cwd_path = pathlib.Path(path).resolve()
         new_cwd = new_cwd_path.as_posix()
-        if new_cwd.startswith(new_cwd_path.drive):
-            new_cwd = new_cwd[len(new_cwd_path.drive) :]
+        new_cwd = new_cwd.removeprefix(new_cwd_path.drive)
         logging.debug(f"call set cwd : {path} -> {new_cwd}")
         self._cwd = new_cwd
 
@@ -197,8 +196,7 @@ class SFTPConnectedFS:
             yield response
 
     def fs2ftp(self, fspath: str):
-        if fspath.startswith("."):
-            fspath = fspath[1:]
+        fspath = fspath.removeprefix(".")
         fspath = (
             f"{fspath[len(self._sftp_root) :]}"
             if fspath.startswith(self._sftp_root)
@@ -277,10 +275,11 @@ class SFTPConnectedFS:
 
     def realpath(self, path: str):
         if not path.startswith("/"):
-            cwd = self._cwd[:-1] if self._cwd.endswith("/") else self._cwd
-            realpath = realpath = f"{cwd}/{path}"
+            cwd = self._cwd.removesuffix("/")
+            realpath = f"{cwd}/{path}"
         else:
             realpath = path
+
         realpath = self.ftp2fs(realpath)
         logging.debug(f"call realpath : {path} -> {realpath}")
         return realpath
