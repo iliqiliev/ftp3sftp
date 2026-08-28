@@ -23,7 +23,7 @@ Address = namedtuple("Address", ("host", "port", "username", "password", "path")
 log = getLogger("ftp3sftp")
 
 
-def main():
+def main() -> None:
     print(
         dedent(f"""\
         ftp3sftp.py (Version {__version__})
@@ -103,7 +103,6 @@ class Authorizer(DummyAuthorizer):
         We overwrite the function because we don't need a homedir
         on the local filesystem.
         """
-
         if self.has_user(username):
             raise ValueError(f"user {username} already exists")
         self._check_permissions(username, perm)
@@ -312,7 +311,7 @@ class SFTPConnectedFS:
         return is_valid
 
 
-def setup_logger(loglevel: str, logdir, keeplog):
+def setup_logger(loglevel: str, logdir: Path | None, keeplog: int) -> None:
     formatter = Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
@@ -336,7 +335,7 @@ def setup_logger(loglevel: str, logdir, keeplog):
         log.addHandler(handler)
 
 
-def parse_address(address):
+def parse_address(address: str) -> Address:
     user_part, server_part = address.split("@")
     user, password = user_part.split(":")
     server_part_elements = server_part.split(":")
@@ -355,7 +354,7 @@ class Ftp3SftpNamespace(Namespace):
 
 
 def parse_arguments_options() -> type[Ftp3SftpNamespace]:
-    arg_parser = ArgumentParser(fromfile_prefix_chars="@")
+    arg_parser = ArgumentParser(fromfile_prefix_chars="@", usage="ftp3sftp [options]")
     arg_parser.add_argument(
         "--ftp",
         type=parse_address,
