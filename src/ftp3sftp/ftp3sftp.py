@@ -1,9 +1,3 @@
-# ftp3sftp.py - A FTP to SFTP bridge
-# Copyright (C) 2026  Iliya Iliev     <iliq0000@proton.me>
-# Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
-# You should have received a copy of the GNU General Public License V3
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 from __future__ import annotations
 
 from argparse import ArgumentParser, Namespace
@@ -36,7 +30,8 @@ def main():
         Licensed under GNU GPL (https://www.gnu.org/licenses/gpl-3.0.html)
         This program comes with ABSOLUTELY NO WARRANTY.
         This is free software, and you are welcome to redistribute it
-        under certain conditions.""")
+        under certain conditions.
+        """)
     )
 
     options = parse_arguments_options()
@@ -67,11 +62,12 @@ def main():
 def connect_sftp(
     host: str, port: int, username: str, password: str
 ) -> tuple[Transport, SFTPClient]:
-    """
-    This functions connects to a SFTP Server and returs a tuple with
-    a paramiko/SSH-transport object and an SFTP-Client object.
-    """
+    """Connect to a SFTP Server.
 
+    Return:
+    tuple with a paramiko/SSH-transport object and an SFTP-Client object.
+
+    """
     log.info(f"Try to connect SFTP: {host}:{port} as user '{username}'")
 
     transport = Transport((host, port))
@@ -86,22 +82,21 @@ def connect_sftp(
 
 
 class Authorizer(DummyAuthorizer):
-    """
-    Subclass of the dummy example to have the option to
-    manage users without a local directory on the filesystem
+    """Subclass of the dummy example.
+
+    To have the option to manage users without a local directory on the filesystem.
     """
 
     def add_user(
         self,
-        username,
-        password,
+        username: str,
+        password: str,
         homedir,
-        perm="elr",
-        msg_login="Login successful.",
-        msg_quit="Goodbye.",
-    ):
-        """
-        Add a user to the virtual users table.
+        perm: str = "elr",
+        msg_login: str = "Login successful.",
+        msg_quit: str = "Goodbye.",
+    ) -> None:
+        """Add a user to the virtual users table.
 
         We overwrite the function because we don't need a homedir
         on the local filesystem.
