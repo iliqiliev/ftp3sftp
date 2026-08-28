@@ -8,7 +8,9 @@ from __future__ import annotations
 
 import argparse
 import logging
+from argparse import Namespace
 from collections import namedtuple
+from dataclasses import dataclass
 from datetime import datetime as DateTime
 from datetime import timezone
 from logging.handlers import TimedRotatingFileHandler
@@ -345,6 +347,15 @@ def parse_address(address):
     host, port = server_part_elements[:2]
     path = server_part_elements[2] if len(server_part_elements) > 2 else None
     return Address(host, int(port), user, password, path)
+
+
+@dataclass
+class Ftp3SftpNamespace(Namespace):
+    ftp: Address
+    sftp: Address
+    loglevel: str
+    logdir: Path | None
+    keeplog: int
 
 
 def parse_arguments_options():
