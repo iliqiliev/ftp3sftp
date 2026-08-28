@@ -16,6 +16,8 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 
+from ftp3sftp import __version__
+
 Address = namedtuple("Address", ("host", "port", "username", "password", "path"))
 
 log = getLogger("ftp3sftp")
@@ -23,8 +25,8 @@ log = getLogger("ftp3sftp")
 
 def main():
     print(
-        dedent("""\
-        ftp3sftp.py (Version 0.7.1)
+        dedent(f"""\
+        ftp3sftp.py (Version {__version__})
         Copyright (C) 2026  Iliya Iliev     <iliq0000@proton.me>
         Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
         Licensed under GNU GPL (https://www.gnu.org/licenses/gpl-3.0.html)
