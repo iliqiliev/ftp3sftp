@@ -10,6 +10,7 @@ from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 from stat import S_ISDIR
 from textwrap import dedent
+from typing import TYPE_CHECKING
 
 from paramiko import SFTPClient, Transport
 from pyftpdlib.authorizers import DummyAuthorizer
@@ -17,6 +18,11 @@ from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 
 from ftp3sftp import __version__
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from paramiko.sftp_attr import SFTPAttributes
 
 Address = namedtuple("Address", ("host", "port", "username", "password", "path"))
 
@@ -123,10 +129,10 @@ class FTP2SFTPHandler(FTPHandler):
     # subclassing the server only to pass this information.
     sftp_config = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def handle_close(self):
+    def handle_close(self) -> None:
         log.debug("call handle_close")
         if self.fs is not None:
             self.fs.close_sftp_connection()
@@ -134,7 +140,7 @@ class FTP2SFTPHandler(FTPHandler):
 
 
 class SFTPConnectedFS:
-    def __init__(self, home, handler):
+    def __init__(self, home, handler) -> None:
         self.handler = handler
         self._root = home
         log.info(f"Home directory for the FTP user: {self._root}")
@@ -147,13 +153,13 @@ class SFTPConnectedFS:
             handler.sftp_config["password"],
         )
 
-    def chdir(self, path):
+    def chdir(self, path) -> None:
         new_path = path
         log.debug(f"call chdir : {path} -> {new_path}")
         self.sftp_client.chdir(new_path)
         self.cwd = self.fs2ftp(new_path)
 
-    def close_sftp_connection(self):
+    def close_sftp_connection(self) -> None:
         log.debug("call close_sftp_connection")
         self.ssh_transport.close()
 
@@ -163,7 +169,7 @@ class SFTPConnectedFS:
         return self._cwd
 
     @cwd.setter
-    def cwd(self, path):
+    def cwd(self, path: str) -> None:
         # We need a little workaround here to resolve posix files (for the
         # SFTP server) on a not posix system. We use pathlib and cut of the
         # drive letter if it appears.
@@ -174,7 +180,14 @@ class SFTPConnectedFS:
         log.debug(f"call set cwd : {path} -> {new_cwd}")
         self._cwd = new_cwd
 
-    def format_mlsx(self, basedir: str, listing, perms, facts, ignore_err=True):
+    def format_mlsx(
+        self,
+        basedir: str,
+        listing,
+        perms,
+        facts,
+        ignore_err: bool = True,
+    ) -> Generator[bytes]:
         log.debug(
             f"call format_mlsx : {basedir}, {listing}, {perms}, {facts}, {ignore_err} -> ..."
         )
@@ -195,7 +208,7 @@ class SFTPConnectedFS:
             log.debug(f" response format_mlsx : {response}")
             yield response
 
-    def fs2ftp(self, fspath: str):
+    def fs2ftp(self, fspath: str) -> str:
         fspath = fspath.removeprefix(".")
         fspath = (
             f"{fspath[len(self._sftp_root) :]}"
@@ -206,7 +219,7 @@ class SFTPConnectedFS:
         log.debug(f"call fs2ftp : {fspath} -> {ftppath}")
         return ftppath
 
-    def ftp2fs(self, ftppath: str):
+    def ftp2fs(self, ftppath: str) -> str:
         if not ftppath.startswith("/"):
             ftppath = f"{self._cwd}/{ftppath}"
         fspath = (
@@ -219,7 +232,7 @@ class SFTPConnectedFS:
         return fspath
 
     def getmtime(self, path: str):
-        stat = self.sftp_client.stat(path)
+        stat: SFTPAttributes = self.sftp_client.stat(path)
         mtime = stat.st_mtime
         log.debug(f"call getmtime : {path} {mtime}")
         return mtime
