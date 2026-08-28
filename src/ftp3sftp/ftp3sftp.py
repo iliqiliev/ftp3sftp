@@ -19,6 +19,44 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 
+
+def main():
+    print(
+        dedent("""\
+        ftp3sftp.py (Version 0.7.1)
+        Copyright (C) 2026  Iliya Iliev     <iliq0000@proton.me>
+        Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
+        Licensed under GNU GPL (https://www.gnu.org/licenses/gpl-3.0.html)
+        This program comes with ABSOLUTELY NO WARRANTY.
+        This is free software, and you are welcome to redistribute it
+        under certain conditions.""")
+    )
+
+    options = parse_arguments_options()
+    setup_logger(options.loglevel, options.logdir, options.keeplog)
+    logging.info("ftp3sftp is starting...")
+    authorizer = Authorizer()
+    authorizer.add_user(
+        options.ftp.username,
+        options.ftp.password,
+        perm="elradfmwMT",
+        homedir=options.ftp.path or f"/home/{options.ftp.username}",
+    )
+    handler = FTP2SFTPHandler
+    handler.authorizer = authorizer
+    handler.abstracted_fs = SFTPConnectedFS
+    sftp_config = {
+        "host": options.sftp.host,
+        "port": options.sftp.port,
+        "username": options.sftp.username,
+        "password": options.sftp.password,
+        "basedir": options.sftp.path,
+    }
+    handler.sftp_config = sftp_config
+    server = FTPServer((options.ftp.host, options.ftp.port), handler)
+    server.serve_forever()
+
+
 Address = namedtuple("Address", ("host", "port", "username", "password", "path"))
 
 
@@ -345,43 +383,6 @@ def parse_arguments_options():
     )
     args = parser.parse_args()
     return args
-
-
-def main():
-    print(
-        dedent("""\
-        ftp3sftp.py (Version 0.7.1)
-        Copyright (C) 2026  Iliya Iliev     <iliq0000@proton.me>
-        Copyright (C) 2023  Sebastian Meyer <sparrow.242.de@gmail.com>
-        Licensed under GNU GPL (https://www.gnu.org/licenses/gpl-3.0.html)
-        This program comes with ABSOLUTELY NO WARRANTY.
-        This is free software, and you are welcome to redistribute it
-        under certain conditions.""")
-    )
-
-    options = parse_arguments_options()
-    setup_logger(options.loglevel, options.logdir, options.keeplog)
-    logging.info("ftp3sftp is starting...")
-    authorizer = Authorizer()
-    authorizer.add_user(
-        options.ftp.username,
-        options.ftp.password,
-        perm="elradfmwMT",
-        homedir=options.ftp.path or f"/home/{options.ftp.username}",
-    )
-    handler = FTP2SFTPHandler
-    handler.authorizer = authorizer
-    handler.abstracted_fs = SFTPConnectedFS
-    sftp_config = {
-        "host": options.sftp.host,
-        "port": options.sftp.port,
-        "username": options.sftp.username,
-        "password": options.sftp.password,
-        "basedir": options.sftp.path,
-    }
-    handler.sftp_config = sftp_config
-    server = FTPServer((options.ftp.host, options.ftp.port), handler)
-    server.serve_forever()
 
 
 if __name__ == "__main__":
