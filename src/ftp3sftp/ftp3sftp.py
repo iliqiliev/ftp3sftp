@@ -106,7 +106,7 @@ class Authorizer(DummyAuthorizer):
         """
 
         if self.has_user(username):
-            raise ValueError("user %r already exists" % username)
+            raise ValueError(f"user {username} already exists")
         self._check_permissions(username, perm)
         self.user_table[username] = {
             "pwd": str(password),
