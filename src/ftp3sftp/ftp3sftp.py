@@ -6,9 +6,8 @@
 
 from __future__ import annotations
 
-import argparse
 import logging
-from argparse import Namespace
+from argparse import ArgumentParser, Namespace
 from collections import namedtuple
 from dataclasses import dataclass
 from datetime import datetime as DateTime
@@ -358,42 +357,40 @@ class Ftp3SftpNamespace(Namespace):
     keeplog: int
 
 
-def parse_arguments_options():
-    parser = argparse.ArgumentParser(
-        fromfile_prefix_chars="@",
-    )
-    parser.add_argument(
+def parse_arguments_options() -> type[Ftp3SftpNamespace]:
+    arg_parser = ArgumentParser(fromfile_prefix_chars="@")
+    arg_parser.add_argument(
         "--ftp",
         type=parse_address,
         required=True,
         help="Information where to start the FTP server: username:password@host:port:/homedir",
     )
-    parser.add_argument(
+    arg_parser.add_argument(
         "--sftp",
         type=parse_address,
         required=True,
         help="Information how to connect the SFTP server: username:password@host:port:/homedir",
     )
-    parser.add_argument(
+    arg_parser.add_argument(
         "--loglevel",
         type=str,
         default="INFO",
-        choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"],
+        choices=("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "NOTSET"),
         help="Set the loglevel for logging. (Default: INFO)",
     )
-    parser.add_argument(
+    arg_parser.add_argument(
         "--logdir",
         type=Path,
         default=None,
-        help="Directory to write the log. Logs will be sperated in files daily",
+        help="Directory to write the log. Logs will be sperated in files daily.",
     )
-    parser.add_argument(
+    arg_parser.add_argument(
         "--keeplog",
         type=int,
         default=7,
-        help="How long (in days) keep the logfile if logdir is set (Default: 7)",
+        help="How long (in days) keep the logfile if logdir is set. (Default: 7)",
     )
-    args = parser.parse_args()
+    args = arg_parser.parse_args(namespace=Ftp3SftpNamespace)
     return args
 
 
